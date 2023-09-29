@@ -1,0 +1,47 @@
+---
+
+
+- name: Copy rke2 master config
+  register: config_file_is_changed
+  ansible.builtin.template:
+    src: "{{ rke2_master_config }}"
+    dest: "{{rke2_config_file_path}}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run RKE2 installation script
+  environment:
+    INSTALL_RKE2_VERSION: "{{ rke2_version }}"
+    INSTALL_RKE2_CHANNEL_URL: "{{ rke2_channel_url }}"
+    INSTALL_RKE2_CHANNEL: "{{ rke2_channel }}"
+  changed_when: false
+  ansible.builtin.command:
+    cmd: "{{ rke2_install_script_dir }}/rke2.sh"
+
+
+- name: Start RKE2 master service on the master server
+  environment:
+    RKE2_TOKEN: "{{ rke2_agent_token }}"
+  ansible.builtin.systemd:
+    name: "rke2-server.service"
+    state: started
+    enabled: true
+
+- name: Copy the cloud configurations
+  ansible.builtin.copy:
+    src: ../files/cloud.conf
+    dest: "{{ cloud_provider_conf_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add cloud provider name
+  ansible.builtin.lineinfile:
+    path: "{{rke2_config_file_path}}"
+    line: "cloud-provider-name: aws" 
+
+- name: Add cloud configs
+  ansible.builtin.lineinfile:
+    path: "{{rke2_config_file_path}}"
+    line: "cloud-provider-config: {{ cloud_provider_conf_path }}"

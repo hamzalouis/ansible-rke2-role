@@ -1,0 +1,10 @@
+galaxy_info:
+  role_name: rke2
+  namespace: Kubernetes
+  author: Hamza Louis
+  description: This Ansible Role will deploy Rancher Kubernetes Engine 2 (RKE2) in its simplest form.
+  license: MIT
+  platforms:
+    - name: RHEL
+      versions:
+        - 8.6

@@ -1,0 +1,30 @@
+---
+
+- name: Ensure needed vars are supplied
+  ansible.builtin.assert:
+    that: 
+      - (rke2_installation_type == "agent")
+    success_msg: |
+      The needed variables are set , proceeding ...
+    fail_msg: |
+      Can't proceed , you need to set the variable rke2_installation_type to agent
+
+- name: Download some dependencies
+  ansible.builtin.include_tasks: setup_tasks.yml
+
+- name: Stop the NetworkManager for cloud
+  ansible.builtin.include_tasks: cloud_tasks.yml
+
+- name: Download RKE2 via the script
+  ansible.builtin.include_tasks: rke2_common.yml
+
+- name: Prepare very first server node in the cluster as a master
+  ansible.builtin.include_tasks: rke2_master.yml
+  when:
+    - inventory_hostname == groups[rke2_masters_group_name].0
+
+- name: Prepare the remain servers as agents in the cluster
+  ansible.builtin.include_tasks: rke2_agent.yml
+  when:
+    - inventory_hostname in groups[rke2_agents_group_name]
+

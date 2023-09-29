@@ -1,0 +1,31 @@
+---
+# - name: Upgrade the main packages
+#   when: ansible_facts['distribution'] == "RedHat"
+#   ansible.builtin.yum:
+#     name: '*'
+#     state: latest
+  
+- name: Show facts available on the system
+  ansible.builtin.debug:
+    var: ansible_facts
+
+# - name: Install netcat
+#   when: ansible_facts['distribution'] == "RedHat"
+#   ansible.builtin.yum:
+#     name: nc
+#     state: latest
+
+- name: Install iptables
+  ansible.builtin.yum:
+    name: iptables-services
+    state: latest
+
+- name: Install latest trusted CA certs
+  ansible.builtin.yum:
+    name: ca-certificates
+    state: latest
+    
+- name: Force the update of the CA certs
+  ansible.builtin.command: 
+    cmd: update-ca-trust force-enable
+  

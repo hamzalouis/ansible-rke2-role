@@ -1,0 +1,8 @@
+{% if rke2_agent_token is defined %}
+token: {{ rke2_agent_token }}
+{% endif %}
+{% if inventory_hostname in groups[rke2_masters_group_name] %}
+tls-san:
+    - {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+    - {{ inventory_hostname }}
+{% endif %}

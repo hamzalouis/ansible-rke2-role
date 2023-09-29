@@ -1,0 +1,26 @@
+---
+
+- name: Stop NetworkManager for cloud
+  with_items: 
+    - nm-cloud-setup.service
+    - nm-cloud-setup.timer
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+
+- name: Disable NetworkManager for cloud
+  with_items: 
+    - nm-cloud-setup.service
+    - nm-cloud-setup.timer
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: false
+  
+- name: Put SELinux in permissive mode
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+
+- name: Reboot machines
+  ansible.builtin.reboot:
+    test_command: echo "$(hostname) - I'm ready for further tasks ..."

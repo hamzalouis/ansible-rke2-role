@@ -1,0 +1,37 @@
+# Contains the role default variables , can be override by the user
+
+---
+# Required variables for the installation process
+
+rke2_master_private_ip: xx.xx.xx.xx
+rke2_config_file_path: /etc/rancher/rke2/config.yaml
+rke2_install_url: https://get.rke2.io
+rke2_install_script_dir: /var/tmp
+rke2_version: v1.26.8+rke2r1            # CHANGEME
+rke2_channel_url: https://update.rke2.io/v1-release/channels
+rke2_channel: stable
+rke2_installation_type: agent           # This variable is a mandatory for the agents group, in order to fetch the agent installation script from the source.
+
+# Insert the names of groups in the inventory file
+
+rke2_masters_group_name: masters
+rke2_agents_group_name: agents
+
+# Insert the path to config files , these are jinja2 templates files to be placed in the /etc/rancher/rke2 directory as a config.yaml file
+
+rke2_master_config: templates/master_config.yaml.j2
+rke2_agent_config: templates/agent_config.yaml.j2
+
+# RKE2 agent token , to be used for joining the workers/agents to the cluster
+
+rke2_agent_token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx    # CHANGEME
+
+# Insert cloud related variables. The variables below have been configured for integrating RKE2 with AWS services such as Elastic Load Balancer (ELB)
+
+# The file ../files/cloud.conf contains the key (SigningRegion) , change it for the required region by your solution. Also, pay attention for the URL of the service which vary from one AWS region to another. Check the link below:
+# https://docs.aws.amazon.com/general/latest/gr/aws-service-information.html
+
+cloud_services_provider: aws
+cloud_provider_conf_path: /etc/rancher/rke2/cloud.conf
+
+
